@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בדיקת פנגרמה עברית</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap');
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            direction: rtl;
+            text-align: right; /* Default text alignment for body */
+            min-height: 100vh;
+            display: flex; /* Use flexbox for overall layout */
+            flex-direction: column; /* Stack content and footer vertically by default */
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex-grow: 1; /* Allow main content to take available space */
+            width: 100%;
+            max-width: 1200px; /* Max width for the entire application */
+            margin: 0 auto; /* Center the main wrapper */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            flex-grow: 1; /* Allow container to take available space */
+            margin-left: 20px; /* Space between container and sidebar */
+            text-align: center; /* Center content within the container */
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        textarea {
+            width: calc(100% - 20px); /* Adjust for padding */
+            height: 180px;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            direction: rtl;
+            text-align: right;
+            resize: vertical;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        #result {
+            font-size: 1.2em;
+            min-height: 30px; /* Ensure space even when empty */
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            margin-top: 20px;
+        }
+
+        .pangram-found {
+            color: #27ae60; /* Green */
+            font-weight: bold;
+        }
+
+        .missing-letters {
+            color: #e74c3c; /* Red */
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                width: 95%;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            p {
+                font-size: 1em;
+            }
+            textarea {
+                height: 120px;
+            }
+        }
+
+        .info-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: right;
+        }
+
+        .info-section h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 1.4em;
+        }
+
+        .info-section p, .info-section ul {
+            font-size: 1em;
+            line-height: 1.7;
+            margin-bottom: 15px;
+            text-align: right;
+        }
+
+        .info-section ul {
+            list-style: none;
+            padding: 0;
+            margin-right: 20px; /* Indent list items */
+        }
+
+        .info-section li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-right: 20px;
+        }
+
+        .info-section li::before {
+            content: '•';
+            color: #3498db;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-right: -1em;
+            position: absolute;
+            right: 0;
+        }
+
+        .more-info {
+            margin-top: 20px;
+            font-size: 0.95em;
+        }
+
+        .more-info a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .more-info a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        .sidebar-footer {
+            width: 15%; /* Approximately 15% as requested */
+            min-width: 180px; /* Minimum width to ensure readability */
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            font-size: 0.85em;
+            color: #6c757d;
+            text-align: center; /* Changed to center */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align content to the top */
+        }
+
+        .sidebar-footer p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            text-align: center; /* Changed to center */
+        }
+
+        .sidebar-footer a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .sidebar-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .warning {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments for sidebar */
+        @media (max-width: 992px) {
+            .main-wrapper {
+                flex-direction: column; /* Stack main content and sidebar vertically */
+            }
+            .container {
+                margin-left: 0;
+                margin-bottom: 20px; /* Space between container and footer */
+            }
+            .sidebar-footer {
+                width: 100%; /* Full width on smaller screens */
+                min-width: unset;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <div class="container">
+            <h1>בדיקת פנגרמה עברית</h1>
+            <p>הקלד טקסט ובדוק אם הוא מכיל את כל אותיות האלפבית העברי:</p>
+            <textarea id="textInput" placeholder="הקלד כאן..."></textarea>
+            <div id="result"></div>
+
+            <div class="info-section">
+                <h2>מהי פנגרמה?</h2>
+                <p>פנגרמה היא משפט או ביטוי המכיל את כל אותיות האלפבית בשפה מסוימת, לפחות פעם אחת. פנגרמות משמשות לעיתים קרובות לבדיקת גופנים, תצוגת טקסט, או כתרגיל לשוני.</p>
+
+                <h2>דוגמאות לפנגרמות בעברית:</h2>
+                <ul>
+                    <li>דג סקרן שט בים מאוכזב ולפתע מצא חברה.</li>
+                    <li>איך בלש תפס גמד רוצח עז קטנה?</li>
+                    <li>שפן אכל קצת גזר בטעם חסה, ודי.</li>
+                    <li>השפן טעם ביס ואכל קצת גזר חד.</li>
+                </ul>
+                <p class="more-info">למידע נוסף: <a href="https://www.hamichlol.org.il/%D7%A4%D7%A0%D7%92%D7%A8%D7%9E%D7%94" target="_blank">פנגרמה במכלול</a></p>
+            </div>
+        </div>
+
+        <footer class="sidebar-footer">
+            <p>נוצר על ידי @צל של עצמו עבור אתגר יומי 329 - פנגרמה באתר פרוג</p>
+            <p>נמחק לך חומר? הכרטיס זיכרון לא עולה במצלמה? מישהו פירמט בטעות? המחשב דורש לאתחל את הכרטיס? <span class="warning">[אל תעשו את זה!]</span></p>
+            <p>פנו עכשיו כדי לבדוק אם אפשר לשחזר. לחצו כאן <a href="https://zlalit111.github.io/recovery-data/" target="_blank">לשחזור נתונים</a> ניתן לפנות גם לעזרה בנושאים שונים במחשבים</p>
+        </footer>
+    </div>
+
+    <script>
+        const hebrewAlphabet = new Set([
+            'א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט', 'י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ', 'ק', 'ר', 'ש', 'ת'
+        ]);
+
+        const finalToRegularMap = {
+            'ך': 'כ',
+            'ם': 'מ',
+            'ן': 'נ',
+            'ף': 'פ',
+            'ץ': 'צ'
+        };
+
+        const textInput = document.getElementById('textInput');
+        const resultDiv = document.getElementById('result');
+
+        function checkPangram() {
+            let inputText = textInput.value.toLowerCase();
+
+            // Normalize final letters
+            for (const finalChar in finalToRegularMap) {
+                inputText = inputText.split(finalChar).join(finalToRegularMap[finalChar]);
+            }
+
+            const foundLetters = new Set();
+            const missingLetters = new Set(hebrewAlphabet);
+
+            for (const char of inputText) {
+                if (hebrewAlphabet.has(char)) {
+                    foundLetters.add(char);
+                    missingLetters.delete(char);
+                }
+            }
+
+            if (missingLetters.size === 0) {
+                resultDiv.innerHTML = '<span class="pangram-found">כל הכבוד! זו פנגרמה עברית!</span>';
+            } else {
+                resultDiv.innerHTML = `
+                    <span class="missing-letters">אותיות חסרות: ${Array.from(missingLetters).sort().join(', ')}</span>
+                `;
+            }
+        }
+
+        textInput.addEventListener('input', checkPangram);
+
+        // Initial check in case there's pre-filled text (though not expected here)
+        checkPangram();
+    </script>
+</body>
+</html>
